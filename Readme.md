@@ -69,9 +69,15 @@ using ThreadPool = Utils::MessageProcessor<Student, 3, Utils::WeakOrdering>;
 The below output illustrates this.  Student processing is partitioned by University by invoking add as show below:
 
 ```cpp
-   auto partitioner = [](Student& s){return s.university;};
+   std::string names[] = {
+      "Ashwin", "Agastya", "Ravi", "Anandan", "Ahilya"
+      };
+   std::string univs[] = {
+      "IIT", "Amrita", "IISC", "NIT"
+      };
    while(i++ < 50){
-      ThreadPool::get_instance()->add(Student{univs[dist(mt)%4], dist(mt), names[dist(mt)%5]}, partitioner);
+      ThreadPool::get_instance()->add(Student{univs[dist(mt)%4], dist(mt), names[dist(mt)%5]},
+      [](Student& s){return s.university;});
    }
 ```
 
