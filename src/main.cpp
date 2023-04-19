@@ -35,7 +35,7 @@ int main() {
    std::random_device dev;
    std::mt19937 mt(dev());
    std::uniform_int_distribution<int> dist(1, 10);
-   using ThreadPool = Utils::MessageProcessor<Student, 3, Utils::WeakOrdering, Utils::AsyncBlocQueue>;
+   using ThreadPool = Utils::MessageProcessor<Student, 3, Utils::WeakOrdering, Utils::ConcurrentBlockQueue_t>;
    std::mutex lk;
    ThreadPool::get_instance()->setProcessor([&lk](Student val) {
          std::lock_guard<std::mutex> lock(lk);

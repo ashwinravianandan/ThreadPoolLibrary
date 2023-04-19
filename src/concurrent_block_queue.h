@@ -154,7 +154,7 @@ namespace Utils {
 
   };
 
-  template <typename T> using AsyncBlocQueue = Utils::ConcurrentBlockQueue<T>;
+  template <typename T> using ConcurrentBlockQueue_t = Utils::ConcurrentBlockQueue<T>;
 } // namespace Utils
 
 #endif // CONCURRENT_BLOCK_QUEUE_H
