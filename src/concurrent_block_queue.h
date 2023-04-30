@@ -90,8 +90,8 @@ namespace Utils {
         }
       }
 
-      inline void add_data( T val) {
-        tail_block->data.emplace_back(val);
+      inline void add_data( T&& val) {
+        tail_block->data.emplace_back(std::move( val ));
         update_tail();
       }
     };
@@ -99,7 +99,7 @@ namespace Utils {
     Head m_head;
     Tail m_tail;
     std::atomic<size_t> m_size{0};
-    std::condition_variable push_pop_sync;
+    std::condition_variable queue_sync;
 
     public:
 
@@ -116,11 +116,11 @@ namespace Utils {
     ConcurrentBlockQueue& operator= ( ConcurrentBlockQueue&& ) = delete;
     ~ConcurrentBlockQueue( ) = default;
 
-    void enqueue( T val ){
+    void enqueue( T&& val ){
       std::lock_guard<std::mutex> guard(m_tail.lock);
-      m_tail.add_data(val);
+      m_tail.add_data(std::forward<T>( val ));
       ++m_size;
-      push_pop_sync.notify_one();
+      queue_sync.notify_one();
     }
 
     std::optional<T> try_dequeue( ) {
@@ -136,7 +136,7 @@ namespace Utils {
 
     T dequeue( ) {
       std::unique_lock<std::mutex> guard(m_head.lock);
-      push_pop_sync.wait(guard, [this]( ){ return not empty( ); } );
+      queue_sync.wait(guard, [this]( ){ return not empty( ); } );
 
       auto data = m_head.pop_data( );
       --m_size;
