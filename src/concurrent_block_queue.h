@@ -145,7 +145,7 @@ namespace Utils {
     }
 
     bool empty( ){
-      return m_size == 0;
+      return !m_size;
     }
 
     size_t size( ) {
