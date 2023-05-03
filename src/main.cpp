@@ -1,5 +1,6 @@
 #include "MessageProcessor.h"
 #include "Queue.h"
+#include "concurrent_block_queue.h"
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -34,7 +35,7 @@ int main() {
    std::random_device dev;
    std::mt19937 mt(dev());
    std::uniform_int_distribution<int> dist(1, 10);
-   using ThreadPool = Utils::MessageProcessor<Student, 3, Utils::WeakOrdering>;
+   using ThreadPool = Utils::MessageProcessor<Student, 3, Utils::WeakOrdering, Utils::ConcurrentBlockQueue_t>;
    std::mutex lk;
    ThreadPool::get_instance()->setProcessor([&lk](Student val) {
          std::lock_guard<std::mutex> lock(lk);
