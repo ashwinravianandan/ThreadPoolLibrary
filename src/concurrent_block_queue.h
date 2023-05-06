@@ -9,8 +9,6 @@
 #include <utility>
 #include <vector>
 
-#include "Queue.h"
-
 namespace Utils {
 
   template <typename T, size_t BLOCK_SIZE = 512> 
@@ -36,7 +34,7 @@ namespace Utils {
       std::mutex lock;
 
       T pop_data( ) {
-        auto retval = head_block->data[block_offset]; 
+        auto retval = std::move( head_block->data[block_offset] ); 
         update_head();
         return retval;
       }
@@ -82,7 +80,6 @@ namespace Utils {
       void update_tail( ) {
         ++block_offset;
         if( block_offset == BLOCK_SIZE ) { 
-          //tail_block->next = std::make_unique<Node>();
           auto next = std::make_unique<Node>();
           tail_block->next = std::move(next);
           tail_block = (tail_block->next).get( );
@@ -144,17 +141,17 @@ namespace Utils {
       return data;
     }
 
-    bool empty( ){
+    bool empty( ) const {
       return !m_size;
     }
 
-    size_t size( ) {
+    size_t size( ) const {
       return m_size;
     }
 
   };
 
-  template <typename T> using ConcurrentBlockQueue_t = Utils::ConcurrentBlockQueue<T>;
+  template <typename T> using ConcurrentBlockQueueT = Utils::ConcurrentBlockQueue<T>;
 } // namespace Utils
 
 #endif // CONCURRENT_BLOCK_QUEUE_H
